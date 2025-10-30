@@ -1,0 +1,106 @@
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Bot, User, ExternalLink } from 'lucide-react';
+import { Message, Source } from '../pages/ChatPage';
+
+interface MessageListProps {
+  messages: Message[];
+}
+
+export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      {messages.map((message) => {
+        const sources: Source[] = message.sources ? JSON.parse(message.sources) : [];
+
+        return (
+          <div
+            key={message.id}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`flex max-w-[80%] ${
+                message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+              }`}
+            >
+              <div
+                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+                  message.role === 'user'
+                    ? 'bg-sky-500 ml-3'
+                    : 'bg-gray-200 mr-3'
+                }`}
+              >
+                {message.role === 'user' ? (
+                  <User className="w-5 h-5 text-white" />
+                ) : (
+                  <Bot className="w-5 h-5 text-gray-700" />
+                )}
+              </div>
+
+              <div className="flex-1">
+                <div
+                  className={`rounded-2xl px-4 py-3 ${
+                    message.role === 'user'
+                      ? 'bg-sky-500 text-white'
+                      : 'bg-white border border-gray-200 text-gray-900'
+                  }`}
+                >
+                  {message.role === 'assistant' ? (
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                          ul: ({ children }) => <ul className="mb-2 ml-4 list-disc">{children}</ul>,
+                          ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal">{children}</ol>,
+                          li: ({ children }) => <li className="mb-1">{children}</li>,
+                          code: ({ children }) => (
+                            <code className="bg-gray-100 px-1 py-0.5 rounded text-sm">{children}</code>
+                          ),
+                          pre: ({ children }) => (
+                            <pre className="bg-gray-100 p-2 rounded overflow-x-auto my-2">{children}</pre>
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
+                </div>
+
+                {sources.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs font-medium text-gray-600">Sources:</p>
+                    <div className="space-y-2">
+                      {sources.map((source, idx) => (
+                        <a
+                          key={idx}
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:border-sky-300 hover:bg-sky-50 transition group"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate group-hover:text-sky-600">
+                              {source.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {source.type === 'drive' ? 'Google Drive' : 'Gmail'}
+                              {source.from && ` • ${source.from}`}
+                            </p>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-sky-500 ml-2 flex-shrink-0" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};

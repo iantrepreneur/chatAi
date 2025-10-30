@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+.prose {
+  @apply text-gray-900;
+}
+
+.prose p {
+  @apply leading-relaxed;
+}
+
+.prose a {
+  @apply text-sky-600 hover:text-sky-700 underline;
+}
+
+.prose code {
+  @apply text-sm;
+}
+
+.prose pre {
+  @apply text-sm;
+}
+
+.prose ul, .prose ol {
+  @apply leading-relaxed;
+}
